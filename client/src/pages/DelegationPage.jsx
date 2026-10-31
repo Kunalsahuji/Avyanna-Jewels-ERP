@@ -2,6 +2,19 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useList, useStats, useResourceMutation, useUsers } from '../api/hooks.js';
 import { fmtDate, isOverdue } from '../lib.js';
+
+function fmtDateTime(d) {
+  if (!d) return '—';
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return '—';
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
 import {
   FileText,
   Clock,
@@ -54,7 +67,11 @@ export default function DelegationPage() {
     reason: '',
   });
 
-  const [newRemarkText, setNewRemarkText] = useState('');
+  const [remarkForm, setRemarkForm] = useState({
+    type: 'Follow-Up (MD)',
+    status: 'pending',
+    text: '',
+  });
 
   const { data: users = [] } = useUsers();
 
@@ -120,23 +137,83 @@ export default function DelegationPage() {
     );
   };
 
-  // Submit new remark
-  const handleRemarkSubmit = (e) => {
-    e.preventDefault();
-    if (!remarkTask || !newRemarkText.trim()) return;
+  // Submit new remark & status from History & Activity modal (Matching Image 2 & 3)
+  const handleSaveRemarkAndStatus = (e) => {
+    if (e) e.preventDefault();
+    if (!remarkTask) return;
+    if (!remarkForm.text.trim()) {
+      alert('Please enter a remark before saving changes.');
+      return;
+    }
     act.mutate(
       {
         id: remarkTask._id,
         action: 'remarks',
-        body: { text: newRemarkText.trim() },
+        body: {
+          text: remarkForm.text.trim(),
+          remarkType: remarkForm.type,
+          status: remarkForm.status,
+        },
       },
       {
-        onSuccess: () => {
-          setNewRemarkText('');
+        onSuccess: (res) => {
+          setRemarkTask(null);
+          setRemarkForm({ type: 'Follow-Up (MD)', status: 'pending', text: '' });
         },
       }
     );
   };
+
+  // Chronological history events for the active task
+  const historyEvents = useMemo(() => {
+    if (!remarkTask) return [];
+    const events = [];
+
+    // 1. Task creation
+    const createdDate = remarkTask.createdAt || remarkTask.dueDate;
+    events.push({
+      date: createdDate,
+      author: remarkTask.assignedBy?.name || 'Rahul Yadav',
+      badge: 'CREATED',
+      description: `Task assigned to ${remarkTask.assignedTo?.name || 'Staff'}.`,
+    });
+
+    // 2. Reschedules / shifts
+    if (remarkTask.shiftHistory?.length) {
+      remarkTask.shiftHistory.forEach((s) => {
+        events.push({
+          date: s.createdAt,
+          author: s.shiftedBy?.name || 'Staff',
+          badge: 'SHIFTED',
+          description: `Postponed to ${fmtDate(s.newDate)}. Reason: "${s.reason}"`,
+        });
+      });
+    }
+
+    // 3. Remarks & follow-ups
+    if (remarkTask.remarks?.length) {
+      remarkTask.remarks.forEach((r) => {
+        events.push({
+          date: r.createdAt,
+          author: `${r.user?.name || 'Staff'}`,
+          badge: r.type ? r.type.toUpperCase() : 'REMARK',
+          description: r.text + (r.statusChange ? ` • (${r.statusChange})` : ''),
+        });
+      });
+    }
+
+    // 4. Completed status
+    if (remarkTask.completedAt) {
+      events.push({
+        date: remarkTask.completedAt,
+        author: 'System',
+        badge: 'COMPLETED',
+        description: 'Task marked as completed.',
+      });
+    }
+
+    return events.sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [remarkTask]);
 
   // Submit task edit
   const handleEditSubmit = (e) => {
@@ -586,11 +663,18 @@ export default function DelegationPage() {
                     {/* Action Icon Tray (Matching Screenshot) */}
                     <td className="px-4 py-3.5 text-center">
                       <div className="flex items-center justify-center gap-1">
-                        {/* 1. Chat / Remark Icon */}
+                        {/* 1. Open History Icon (Matching Image 2 & 3) */}
                         <button
-                          onClick={() => setRemarkTask(task)}
+                          onClick={() => {
+                            setRemarkTask(task);
+                            setRemarkForm({
+                              type: 'Follow-Up (MD)',
+                              status: task.status || 'pending',
+                              text: '',
+                            });
+                          }}
                           className="rounded p-1 text-walnut-500 transition hover:bg-cream-100 hover:text-walnut-900"
-                          title="Remarks & Activity"
+                          title="Open History"
                         >
                           <MessageSquare className="h-4 w-4" />
                         </button>
@@ -669,7 +753,7 @@ export default function DelegationPage() {
 
       {/* Modal 1: Assign New Task */}
       {showAssignModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-lg p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-display text-xl font-bold text-walnut-950">
@@ -752,7 +836,7 @@ export default function DelegationPage() {
 
       {/* Modal 2: Shift Date / Reschedule */}
       {shiftTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-display text-xl font-bold text-walnut-950">
@@ -807,70 +891,187 @@ export default function DelegationPage() {
         </div>
       )}
 
-      {/* Modal 3: Remarks & History */}
+      {/* Modal 3: Open History (Matching Image 2 & 3) */}
       {remarkTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
-          <div className="card w-full max-w-lg p-6 shadow-2xl flex flex-col max-h-[85vh]">
-            <div className="flex items-center justify-between border-b border-cream-200 pb-3">
-              <div>
-                <span className="font-mono text-xs font-bold text-gold-700">{remarkTask.taskId}</span>
-                <h3 className="font-display text-lg font-bold text-walnut-950">Task Discussion & Remarks</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
+          <div className="card w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] bg-white">
+            {/* Dark Header (Matching Image 2) */}
+            <div className="bg-[#241710] px-6 py-4 text-white">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-mono text-sm font-bold tracking-wide text-cream-100">
+                      {remarkTask.taskId}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-200">
+                      <Clock className="h-3 w-3" />
+                      {remarkTask.status?.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-cream-200/90 font-normal">
+                    {remarkTask.description}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRemarkTask(null)}
+                  className="rounded p-1 text-cream-300 hover:text-white transition"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-              <button onClick={() => setRemarkTask(null)} className="rounded p-1 text-walnut-400 hover:text-walnut-900">
-                <X className="h-5 w-5" />
-              </button>
             </div>
 
-            {/* Shift History & Remarks log */}
-            <div className="flex-1 overflow-y-auto py-3 space-y-3">
-              {remarkTask.shiftHistory?.length > 0 && (
-                <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3 text-xs space-y-1.5">
-                  <span className="font-bold text-rose-700">Reschedule / Shift History:</span>
-                  {remarkTask.shiftHistory.map((s, idx) => (
-                    <div key={idx} className="text-[11px] text-walnut-700">
-                      • Postponed to <b>{fmtDate(s.newDate)}</b> by {s.shiftedBy?.name || 'Staff'}: <i>"{s.reason}"</i>
+            {/* Scrollable Content Body */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 text-xs text-walnut-800">
+              {/* Key Value Details matching Image 2 */}
+              <div className="divide-y divide-cream-200 border-b border-cream-200 pb-2">
+                <div className="grid grid-cols-[140px_1fr] py-2 items-center">
+                  <span className="text-walnut-500 font-medium">Assigned By</span>
+                  <span className="font-semibold text-walnut-900">{remarkTask.assignedBy?.name || '—'}</span>
+                </div>
+                <div className="grid grid-cols-[140px_1fr] py-2 items-center">
+                  <span className="text-walnut-500 font-medium">Assigned To</span>
+                  <span className="font-semibold text-walnut-900">{remarkTask.assignedTo?.name || '—'}</span>
+                </div>
+                <div className="grid grid-cols-[140px_1fr] py-2 items-center">
+                  <span className="text-walnut-500 font-medium">Priority</span>
+                  <div>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-800 uppercase">
+                      <AlertTriangle className="h-3 w-3" /> {remarkTask.priority || 'medium'}
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-[140px_1fr] py-2 items-center">
+                  <span className="text-walnut-500 font-medium">Planned Date</span>
+                  <span className="font-semibold text-walnut-900">{fmtDateTime(remarkTask.dueDate)}</span>
+                </div>
+                <div className="grid grid-cols-[140px_1fr] py-2 items-center">
+                  <span className="text-walnut-500 font-medium">Revisions</span>
+                  <span className="font-semibold text-walnut-900">{remarkTask.revisions ?? 0} of 2 used</span>
+                </div>
+                <div className="grid grid-cols-[140px_1fr] py-2 items-center">
+                  <span className="text-walnut-500 font-medium">Proof</span>
+                  <div>
+                    <span className="inline-flex items-center rounded border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-800 uppercase">
+                      {remarkTask.proofRequired === false ? 'OPTIONAL' : 'REQUIRED'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ADD A REMARK Section matching Image 2 */}
+              <div className="space-y-3 pt-1">
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-walnut-500">
+                  ADD A REMARK
+                </h4>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="label text-xs">
+                      Remark Type <span className="text-brick-600">*</span>
+                    </label>
+                    <select
+                      value={remarkForm.type}
+                      onChange={(e) => setRemarkForm({ ...remarkForm, type: e.target.value })}
+                      className="input text-xs"
+                    >
+                      <option value="Follow-Up (MD)">Follow-Up (MD)</option>
+                      <option value="Employee Note">Employee Note</option>
+                      <option value="Status Change">Status Change</option>
+                      <option value="General Remark">General Remark</option>
+                    </select>
+                    <p className="mt-1 text-[10px] text-walnut-400">
+                      Counts as a follow-up and can change the status.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="label text-xs">
+                      Status <span className="text-brick-600">*</span>
+                    </label>
+                    <select
+                      value={remarkForm.status}
+                      onChange={(e) => setRemarkForm({ ...remarkForm, status: e.target.value })}
+                      className="input text-xs"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="approval_waiting">Approval Waiting</option>
+                      <option value="completed">Completed</option>
+                      <option value="shifted">Shifted</option>
+                    </select>
+                    <p className="mt-1 text-[10px] text-walnut-400">
+                      Choose Completed once the work is done.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="label text-xs">
+                    Remark <span className="text-brick-600">*</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={remarkForm.text}
+                    onChange={(e) => setRemarkForm({ ...remarkForm, text: e.target.value })}
+                    placeholder="Your remark..."
+                    className="input text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* HISTORY Section matching Image 3 */}
+              <div className="space-y-3 pt-2">
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-walnut-500">
+                  HISTORY
+                </h4>
+
+                <div className="relative pl-5 space-y-4 before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-cream-300">
+                  {historyEvents.map((evt, idx) => (
+                    <div key={idx} className="relative">
+                      <span className="absolute -left-5 top-1 h-3 w-3 rounded-full border-2 border-walnut-400 bg-white" />
+                      <div className="text-xs">
+                        <span className="font-medium text-walnut-600">
+                          {fmtDateTime(evt.date)} • {evt.author}
+                        </span>
+                        <div className="mt-1 rounded border-l-2 border-walnut-400 bg-cream-50 px-3 py-1.5 text-walnut-800">
+                          <span className="font-bold uppercase text-[10px] text-walnut-700 mr-1.5">
+                            {evt.badge}
+                          </span>
+                          {evt.description}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-              )}
-
-              {remarkTask.remarks?.length > 0 ? (
-                remarkTask.remarks.map((r, idx) => (
-                  <div key={idx} className="rounded-lg bg-cream-100 p-2.5 text-xs">
-                    <div className="flex justify-between font-semibold text-walnut-900">
-                      <span>{r.user?.name || 'User'}</span>
-                      <span className="text-[10px] text-walnut-500">{new Date(r.createdAt).toLocaleTimeString()}</span>
-                    </div>
-                    <p className="mt-1 text-walnut-700">{r.text}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-center text-xs text-walnut-400 py-6">No comments recorded on this task yet.</p>
-              )}
+              </div>
             </div>
 
-            {/* Input to add remark */}
-            <form onSubmit={handleRemarkSubmit} className="pt-3 border-t border-cream-200 flex gap-2">
-              <input
-                type="text"
-                required
-                placeholder="Type a remark or instruction..."
-                value={newRemarkText}
-                onChange={(e) => setNewRemarkText(e.target.value)}
-                className="input py-1.5 text-xs flex-1"
-              />
-              <button type="submit" disabled={act.isPending} className="btn-primary px-3 py-1.5 text-xs flex items-center gap-1">
-                <Send className="h-3.5 w-3.5" />
-                Add
+            {/* Pinned Bottom Footer matching Image 2 & 3 */}
+            <div className="border-t border-cream-200 bg-[#fbf7f2] px-6 py-3 flex justify-end items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setRemarkTask(null)}
+                className="rounded-lg border border-cream-300 bg-white px-4 py-1.5 text-xs font-semibold text-walnut-700 hover:bg-cream-50 transition shadow-xs"
+              >
+                Close
               </button>
-            </form>
+              <button
+                type="button"
+                onClick={handleSaveRemarkAndStatus}
+                disabled={act.isPending}
+                className="rounded-lg bg-[#4a2e22] px-5 py-1.5 text-xs font-semibold text-white hover:bg-[#382218] transition disabled:opacity-50 shadow-xs"
+              >
+                {act.isPending ? 'Saving…' : 'Save Changes'}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Modal 4: Edit Task */}
       {editingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-display text-xl font-bold text-walnut-950">
@@ -953,7 +1154,7 @@ export default function DelegationPage() {
 
       {/* Modal 5: Delete Confirmation */}
       {deletingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-sm p-6 shadow-2xl">
             <h3 className="font-display text-xl font-bold text-walnut-950">Confirm Deletion</h3>
             <p className="mt-2 text-xs text-walnut-600">
