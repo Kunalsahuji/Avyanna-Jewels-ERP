@@ -99,14 +99,32 @@ class DelegationService extends BaseService {
     return this.Model.findById(id).populate(this.cfg.populate);
   }
 
-  async addRemark(user, id, text) {
+  async addRemark(user, id, body) {
+    const text = typeof body === 'string' ? body : body.text;
+    const remarkType = typeof body === 'object' && body.remarkType ? body.remarkType : 'Follow-Up (MD)';
+    const newStatus = typeof body === 'object' ? body.status : undefined;
+
     if (!text || !text.trim()) throw new AppError('Remark text cannot be empty', 400);
     const doc = await this.Model.findById(id);
     if (!doc) throw new AppError('Delegation not found', 404);
 
+    const oldStatus = doc.status;
+    let statusChange;
+    if (newStatus && newStatus !== oldStatus) {
+      doc.status = newStatus;
+      statusChange = `Status changed to ${newStatus}`;
+      if (newStatus === 'completed' && !doc.completedAt) {
+        doc.completedAt = new Date();
+      } else if (newStatus !== 'completed') {
+        doc.completedAt = undefined;
+      }
+    }
+
     doc.remarks.push({
       user: user._id,
+      type: remarkType,
       text: text.trim(),
+      statusChange,
       createdAt: new Date(),
     });
     doc.remark = text.trim();
