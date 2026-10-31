@@ -3,7 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
   body { @apply bg-cream-100 font-sans text-walnut-800 antialiased; }
+  body.modal-open {
+    overflow: hidden !important;
+    overscroll-behavior: contain !important;
+  }
   h1, h2, h3 { @apply font-display; }
   :focus-visible { @apply outline-2 outline-offset-2 outline-gold-500; }
 }
