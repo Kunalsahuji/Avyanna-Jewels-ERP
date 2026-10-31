@@ -89,7 +89,7 @@ export default function AppShell() {
         </div>
 
         {/* Navigation list */}
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-3 text-xs">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto no-scrollbar px-3 py-3 text-xs">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             return (
@@ -171,7 +171,7 @@ export default function AppShell() {
         </header>
 
         {/* Mobile Horizontal Nav */}
-        <nav className="flex gap-2 overflow-x-auto border-b border-cream-200 bg-white p-2 md:hidden">
+        <nav className="flex gap-2 overflow-x-auto no-scrollbar border-b border-cream-200 bg-white p-2 md:hidden">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.path}
