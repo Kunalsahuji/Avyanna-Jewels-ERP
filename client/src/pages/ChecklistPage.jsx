@@ -706,7 +706,7 @@ export default function ChecklistPage({ category = 'general', title = 'Checklist
 
       {/* Modal 1: Mark Done & Proof Upload */}
       {completingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-display text-xl font-bold text-walnut-950">
@@ -775,7 +775,7 @@ export default function ChecklistPage({ category = 'general', title = 'Checklist
 
       {/* Modal 2: MD Remark */}
       {remarkTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-display text-xl font-bold text-walnut-950">
@@ -819,7 +819,7 @@ export default function ChecklistPage({ category = 'general', title = 'Checklist
 
       {/* Modal 3: Add New Task */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-lg p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-display text-xl font-bold text-walnut-950">
