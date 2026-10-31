@@ -6,7 +6,9 @@ export const PRIORITY = ['low', 'medium', 'high', 'critical'];
 const remarkSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    type: { type: String, default: 'Follow-Up (MD)' },
     text: { type: String, required: true },
+    statusChange: { type: String },
     createdAt: { type: Date, default: Date.now },
   },
   { _id: false }
@@ -43,6 +45,7 @@ const schema = new mongoose.Schema(
     priority: { type: String, enum: PRIORITY, default: 'medium' },
     status: { type: String, enum: DELEGATION_STATUS, default: 'pending', index: true },
     revisions: { type: Number, default: 0 },
+    proofRequired: { type: Boolean, default: true },
     remark: { type: String },
     remarks: [remarkSchema],
     shiftHistory: [shiftSchema],
