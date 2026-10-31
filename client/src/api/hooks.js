@@ -37,6 +37,7 @@ export function useResourceMutation(resource) {
     create: useMutation({ mutationFn: (body) => http.post(`/${resource}`, body), onSuccess: refresh }),
     act: useMutation({ mutationFn: ({ id, action, body }) => http.post(`/${resource}/${id}/${action}`, body), onSuccess: refresh }),
     complete: useMutation({ mutationFn: ({ id, body }) => http.post(`/${resource}/${id}/complete`, body), onSuccess: refresh }),
+    update: useMutation({ mutationFn: ({ id, body }) => http.patch(`/${resource}/${id}`, body), onSuccess: refresh }),
     updateRemark: useMutation({ mutationFn: ({ id, mdRemark }) => http.patch(`/${resource}/${id}/remark`, { mdRemark }), onSuccess: refresh }),
     remove: useMutation({ mutationFn: (id) => http.delete(`/${resource}/${id}`), onSuccess: refresh }),
   };
