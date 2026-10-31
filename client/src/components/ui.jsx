@@ -35,7 +35,7 @@ export const ProgressBar = ({ value, tone = 'bg-leaf-500' }) => (
 
 export function Modal({ title, onClose, children }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-900/50 p-4" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-900/50 p-4" onMouseDown={onClose}>
       <div role="dialog" aria-modal="true" aria-label={title} className="card w-full max-w-lg p-6" onMouseDown={(e) => e.stopPropagation()}>
         <h2 className="mb-4 text-2xl font-semibold">{title}</h2>
         {children}
