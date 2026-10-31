@@ -5,6 +5,7 @@ import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import DelegationPage from './pages/DelegationPage.jsx';
 import ChecklistPage from './pages/ChecklistPage.jsx';
+import TicketsPage from './pages/TicketsPage.jsx';
 import ModulePage from './components/ModulePage.jsx';
 import ModulePlaceholder from './components/ModulePlaceholder.jsx';
 import { modules, placeholderModules } from './modules.config.jsx';
@@ -17,7 +18,11 @@ function Protected({ children }) {
 
 export default function App() {
   const genericModules = modules.filter(
-    (m) => m.path !== 'checklist' && m.path !== 'account-checklist' && m.path !== 'delegation'
+    (m) =>
+      m.path !== 'checklist' &&
+      m.path !== 'account-checklist' &&
+      m.path !== 'delegation' &&
+      m.path !== 'tickets'
   );
 
   return (
@@ -29,6 +34,7 @@ export default function App() {
         <Route path="delegation" element={<DelegationPage />} />
         <Route path="checklist" element={<ChecklistPage category="general" title="Checklist" />} />
         <Route path="account-checklist" element={<ChecklistPage category="account" title="Account Checklist" />} />
+        <Route path="tickets" element={<TicketsPage />} />
         {genericModules.map((m) => (
           <Route key={m.path} path={m.path} element={<ModulePage config={m} />} />
         ))}
