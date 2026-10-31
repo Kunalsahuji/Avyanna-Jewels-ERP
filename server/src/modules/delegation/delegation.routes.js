@@ -26,6 +26,8 @@ const shiftSchema = z.object({
 
 const remarkSchema = z.object({
   text: z.string().min(1).max(1000),
+  remarkType: z.string().optional(),
+  status: z.enum(DELEGATION_STATUS).optional(),
 });
 
 const sendBackSchema = z.object({
@@ -69,7 +71,7 @@ router.post(
   '/:id/remarks',
   validate({ params: idParam, body: remarkSchema }),
   asyncHandler(async (req, res) =>
-    res.json({ success: true, data: await svc.addRemark(req.user, req.params.id, req.body.text) })
+    res.json({ success: true, data: await svc.addRemark(req.user, req.params.id, req.body) })
   )
 );
 
