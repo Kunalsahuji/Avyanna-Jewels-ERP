@@ -75,7 +75,7 @@ export class BaseService {
   }
 
   async getOwned(user, id) {
-    const doc = await this.Model.findOne({ _id: id, ...this.scope(user) });
+    const doc = await this.Model.findOne({ _id: id, ...this.scope(user) }).populate(this.cfg.populate);
     if (!doc) throw new AppError('Not found', 404);
     return doc;
   }
