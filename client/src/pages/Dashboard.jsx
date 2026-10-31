@@ -754,7 +754,7 @@ export default function Dashboard() {
 
       {/* Review & Decision Modal */}
       {reviewItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <div>
@@ -808,7 +808,7 @@ export default function Dashboard() {
 
       {/* Quick Assign Task Modal */}
       {showAssignModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-walnut-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain bg-walnut-950/60 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-lg p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <h3 className="font-display text-xl font-bold text-walnut-950">Quick Assign Task</h3>
