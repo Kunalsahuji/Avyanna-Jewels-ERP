@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 import AppShell from './components/AppShell.jsx';
@@ -17,6 +18,29 @@ function Protected({ children }) {
 }
 
 export default function App() {
+  // Global modal scroll lock: prevent background page scrolling whenever any modal/popup is open
+  useEffect(() => {
+    const handleScrollLock = () => {
+      const hasModal = !!document.querySelector(
+        '.fixed.inset-0, [role="dialog"], [aria-modal="true"], .modal-backdrop'
+      );
+      if (hasModal) {
+        document.body.classList.add('modal-open');
+      } else {
+        document.body.classList.remove('modal-open');
+      }
+    };
+
+    const observer = new MutationObserver(handleScrollLock);
+    observer.observe(document.body, { childList: true, subtree: true });
+    handleScrollLock();
+
+    return () => {
+      observer.disconnect();
+      document.body.classList.remove('modal-open');
+    };
+  }, []);
+
   const genericModules = modules.filter(
     (m) =>
       m.path !== 'checklist' &&
