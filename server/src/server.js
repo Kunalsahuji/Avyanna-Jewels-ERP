@@ -5,7 +5,7 @@ import { logger } from './config/logger.js';
 
 await connectDB();
 const server = app.listen(env.port, () => {
-  logger.info(`Tvisha ERP API server listening on port ${env.port} [Environment: ${env.nodeEnv}]`);
+  logger.info(`Avyanna ERP API server listening on port ${env.port} [Environment: ${env.nodeEnv}]`);
 });
 
 const shutdown = (signal) => {
