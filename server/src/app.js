@@ -13,7 +13,7 @@ const app = express();
 app.use(helmet());
 const configuredOrigins = (env.clientUrl || '')
   .split(',')
-  .map((o) => o.trim())
+  .map((o) => o.trim().replace(/\/+$/, ''))
   .filter(Boolean);
 
 app.use(
@@ -21,18 +21,21 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like health checks, mobile, curl)
       if (!origin) return callback(null, true);
+      const cleanOrigin = origin.replace(/\/+$/, '');
       // Allow explicitly configured origins, local development, or Vercel domains
       if (
-        configuredOrigins.includes(origin) ||
+        configuredOrigins.includes(cleanOrigin) ||
         configuredOrigins.includes('*') ||
         env.nodeEnv === 'development' ||
-        /\.vercel\.app$/.test(origin)
+        /\.vercel\.app$/.test(cleanOrigin)
       ) {
         return callback(null, true);
       }
       return callback(new Error(`CORS blocked for origin: ${origin}`), false);
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 app.use(express.json({ limit: '1mb' }));
