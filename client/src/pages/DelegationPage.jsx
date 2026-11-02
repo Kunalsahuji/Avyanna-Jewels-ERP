@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useList, useStats, useResourceMutation, useUsers } from '../api/hooks.js';
 import { fmtDate, isOverdue } from '../lib.js';
+import { DataTablePagination, SortableHeader } from '../components/DataTablePagination.jsx';
 
 function fmtDateTime(d) {
   if (!d) return '—';
@@ -47,6 +48,12 @@ export default function DelegationPage() {
   const [priorityFilter, setPriorityFilter] = useState('');
   const [daysWindow, setDaysWindow] = useState('30');
 
+  // Pagination & Sorting state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [sortBy, setSortBy] = useState('dueDate');
+  const [sortOrder, setSortOrder] = useState('desc');
+
   // Modals state
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [shiftTask, setShiftTask] = useState(null);
@@ -84,13 +91,19 @@ export default function DelegationPage() {
     return { from: from.toISOString() };
   }, [daysWindow]);
 
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+    setPage(1);
+  };
+
   const queryParams = useMemo(() => {
-    const q = { ...dateParams };
+    const q = { page, limit, sortBy, sortOrder, ...dateParams };
     if (statusFilter) q.status = statusFilter;
     if (priorityFilter) q.priority = priorityFilter;
     if (search) q.search = search;
     return q;
-  }, [dateParams, statusFilter, priorityFilter, search]);
+  }, [dateParams, statusFilter, priorityFilter, search, page, limit, sortBy, sortOrder]);
 
   const { data: listData, isLoading } = useList('delegations', queryParams);
   const { data: stats } = useStats('delegations', dateParams);
@@ -543,13 +556,51 @@ export default function DelegationPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-[#1f140a] text-cream-200/90 font-medium">
               <tr>
-                <th className="px-4 py-3 font-semibold">Task ID</th>
+                <SortableHeader
+                  field="taskId"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Task ID
+                </SortableHeader>
                 <th className="px-4 py-3 font-semibold">Assigned To</th>
                 <th className="px-4 py-3 font-semibold">Assigned By</th>
-                <th className="px-4 py-3 font-semibold min-w-[200px]">Task</th>
-                <th className="px-4 py-3 font-semibold">Due</th>
-                <th className="px-3 py-3 font-semibold text-center">Status</th>
-                <th className="px-3 py-3 font-semibold text-center">Priority</th>
+                <SortableHeader
+                  field="description"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                  className="min-w-[200px]"
+                >
+                  Task
+                </SortableHeader>
+                <SortableHeader
+                  field="dueDate"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Due
+                </SortableHeader>
+                <SortableHeader
+                  field="status"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                  align="center"
+                >
+                  Status
+                </SortableHeader>
+                <SortableHeader
+                  field="priority"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                  align="center"
+                >
+                  Priority
+                </SortableHeader>
                 <th className="px-2 py-3 font-semibold text-center">Rev.</th>
                 <th className="px-3 py-3 font-semibold text-center">FILES</th>
                 <th className="px-4 py-3 font-semibold text-center">ACTION</th>
@@ -749,6 +800,20 @@ export default function DelegationPage() {
             </tbody>
           </table>
         </div>
+
+        {listData && (
+          <DataTablePagination
+            page={listData.page || page}
+            pages={listData.pages || 1}
+            total={listData.total || tasks.length}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(l) => {
+              setLimit(l);
+              setPage(1);
+            }}
+          />
+        )}
       </div>
 
       {/* Modal 1: Assign New Task */}
