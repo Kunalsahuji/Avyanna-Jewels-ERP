@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: avyanna-erp-api
+    name: avyanna-jewels-erp
     env: node
     plan: free
     rootDir: server
