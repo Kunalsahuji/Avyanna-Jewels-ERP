@@ -13,6 +13,7 @@ import ProductionFmsPage from './pages/ProductionFmsPage.jsx';
 import SupplierFmsPage from './pages/SupplierFmsPage.jsx';
 import ExhibitionFmsPage from './pages/ExhibitionFmsPage.jsx';
 import PreExhibitionFmsPage from './pages/PreExhibitionFmsPage.jsx';
+import AttendancePage from './pages/AttendancePage.jsx';
 import ModulePage from './components/ModulePage.jsx';
 import ModulePlaceholder from './components/ModulePlaceholder.jsx';
 import { modules, placeholderModules } from './modules.config.jsx';
@@ -71,6 +72,7 @@ export default function App() {
         <Route path="supplier-fms" element={<SupplierFmsPage />} />
         <Route path="exhibition-fms" element={<ExhibitionFmsPage />} />
         <Route path="pre-exhibition-fms" element={<PreExhibitionFmsPage />} />
+        <Route path="attendance" element={<AttendancePage />} />
         {genericModules.map((m) => (
           <Route key={m.path} path={m.path} element={<ModulePage config={m} />} />
         ))}
