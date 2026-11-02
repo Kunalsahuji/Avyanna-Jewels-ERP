@@ -7,6 +7,7 @@ import tickets from './modules/tickets/ticket.routes.js';
 import dashboard from './modules/dashboard/dashboard.routes.js';
 import stock from './modules/stock/stock.routes.js';
 import cityTransfers from './modules/cityTransfer/cityTransfer.routes.js';
+import production from './modules/production/production.routes.js';
 
 const router = Router();
 router.get('/health', (req, res) => res.json({ ok: true, uptime: process.uptime() }));
@@ -18,5 +19,6 @@ router.use('/tickets', tickets);
 router.use('/dashboard', dashboard);
 router.use('/stock', stock);
 router.use('/city-transfers', cityTransfers);
+router.use('/production', production);
 
 export default router;
