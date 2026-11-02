@@ -11,7 +11,30 @@ import { notFound, errorHandler } from './middleware/error.js';
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.clientUrl }));
+const configuredOrigins = (env.clientUrl || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like health checks, mobile, curl)
+      if (!origin) return callback(null, true);
+      // Allow explicitly configured origins, local development, or Vercel domains
+      if (
+        configuredOrigins.includes(origin) ||
+        configuredOrigins.includes('*') ||
+        env.nodeEnv === 'development' ||
+        /\.vercel\.app$/.test(origin)
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS blocked for origin: ${origin}`), false);
+    },
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: '1mb' }));
 
 if (env.nodeEnv !== 'test') {
