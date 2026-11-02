@@ -34,9 +34,9 @@ export default function Login() {
         {/* Brand Header */}
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-gold-400 via-gold-500 to-gold-700 text-walnut-950 shadow-md">
-            <span className="font-display text-2xl font-bold italic tracking-tight">TJ</span>
+            <span className="font-display text-2xl font-bold italic tracking-tight">AV</span>
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-wider text-walnut-950">TVISHA JEWLZ</h1>
+          <h1 className="font-display text-2xl font-bold tracking-wider text-walnut-950">AVYANNA JEWELS</h1>
           <p className="mt-1 text-xs uppercase tracking-widest text-gold-600">Enterprise ERP System</p>
         </div>
 
@@ -48,7 +48,7 @@ export default function Login() {
                 id="email"
                 type="email"
                 required
-                placeholder="name@tvishajewlz.com"
+                placeholder="name@avyannajewels.com"
                 className="input pl-9"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
