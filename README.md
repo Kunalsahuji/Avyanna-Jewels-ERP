@@ -1,4 +1,4 @@
-# Tvisha ERP (MERN starter)
+# Avyanna Jewels ERP (MERN enterprise)
 
 React + Vite + Tailwind client, Express + MongoDB API. Modules: Auth & Users, Dashboard, Delegation, Checklist (general + account), Help Tickets.
 
