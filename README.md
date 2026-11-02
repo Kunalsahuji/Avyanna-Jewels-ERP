@@ -51,6 +51,10 @@
 - **Advanced Data Handling**: Server-side pagination (`10`, `20`, `50`, `100` rows), injection-safe dynamic column sorting (`SortableHeader`), and multi-field regex search.
 - **Enterprise Security**: Role-based access control (Admin, Manager, Doer/Karigar) with automatic scoping, password encryption with bcryptjs, and rate-limiting on sensitive endpoints.
 
+Log In to Test:
+Email: devraj@avyannajewels.com
+Password: Password@123
+
 ---
 
 ## 🏛️ Enterprise Architecture
