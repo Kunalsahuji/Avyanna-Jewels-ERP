@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useList, useStats, useResourceMutation, useUsers } from '../api/hooks.js';
 import { fmtDate, isOverdue } from '../lib.js';
+import { DataTablePagination, SortableHeader } from '../components/DataTablePagination.jsx';
 import {
   LifeBuoy,
   Clock,
@@ -31,6 +32,12 @@ export default function TicketsPage() {
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [daysWindow, setDaysWindow] = useState('30');
 
+  // Pagination & Sorting state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [sortBy, setSortBy] = useState('dueDate');
+  const [sortOrder, setSortOrder] = useState('desc');
+
   // Modals state
   const [showRaiseModal, setShowRaiseModal] = useState(false);
   const [resolvingTicket, setResolvingTicket] = useState(null);
@@ -58,14 +65,20 @@ export default function TicketsPage() {
     return { from: from.toISOString() };
   }, [daysWindow]);
 
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+    setPage(1);
+  };
+
   const queryParams = useMemo(() => {
-    const q = { ...dateParams };
+    const q = { page, limit, sortBy, sortOrder, ...dateParams };
     if (statusFilter) q.status = statusFilter;
     if (priorityFilter) q.priority = priorityFilter;
     if (departmentFilter) q.department = departmentFilter;
     if (search) q.search = search;
     return q;
-  }, [dateParams, statusFilter, priorityFilter, departmentFilter, search]);
+  }, [dateParams, statusFilter, priorityFilter, departmentFilter, search, page, limit, sortBy, sortOrder]);
 
   const { data: listData, isLoading } = useList('tickets', queryParams);
   const { data: stats } = useStats('tickets', dateParams);
@@ -433,14 +446,59 @@ export default function TicketsPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-[#1f140a] text-cream-200/90 font-medium">
               <tr>
-                <th className="px-4 py-3 font-semibold">Ticket No</th>
-                <th className="px-4 py-3 font-semibold min-w-[200px]">Title & Description</th>
-                <th className="px-3 py-3 font-semibold">Dept</th>
+                <SortableHeader
+                  field="ticketNo"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Ticket No
+                </SortableHeader>
+                <SortableHeader
+                  field="title"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                  className="min-w-[200px]"
+                >
+                  Title &amp; Description
+                </SortableHeader>
+                <SortableHeader
+                  field="department"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Dept
+                </SortableHeader>
                 <th className="px-4 py-3 font-semibold">Raised By</th>
                 <th className="px-4 py-3 font-semibold">Assigned To</th>
-                <th className="px-4 py-3 font-semibold">Due & SLA</th>
-                <th className="px-3 py-3 font-semibold text-center">Status</th>
-                <th className="px-3 py-3 font-semibold text-center">Priority</th>
+                <SortableHeader
+                  field="dueDate"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Due &amp; SLA
+                </SortableHeader>
+                <SortableHeader
+                  field="status"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                  align="center"
+                >
+                  Status
+                </SortableHeader>
+                <SortableHeader
+                  field="priority"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                  align="center"
+                >
+                  Priority
+                </SortableHeader>
                 <th className="px-4 py-3 font-semibold text-center">ACTION</th>
               </tr>
             </thead>
@@ -595,6 +653,20 @@ export default function TicketsPage() {
             </tbody>
           </table>
         </div>
+
+        {listData && (
+          <DataTablePagination
+            page={listData.page || page}
+            pages={listData.pages || 1}
+            total={listData.total || tickets.length}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(l) => {
+              setLimit(l);
+              setPage(1);
+            }}
+          />
+        )}
       </div>
 
       {/* Modal 1: Raise New Ticket */}
