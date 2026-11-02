@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { ContentSkeleton } from './Skeletons.jsx';
+import { preloadRoute, preloadCoreRoutes } from '../routeLoaders.js';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -42,6 +44,11 @@ export default function AppShell() {
   const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // Background idle preloading of primary modules to eliminate click latency
+  useEffect(() => {
+    preloadCoreRoutes();
+  }, []);
 
   // Match current nav title
   const currentNav = NAV_ITEMS.find((n) => pathname.startsWith(`/${n.path}`)) || { title: 'Dashboard' };
@@ -96,6 +103,8 @@ export default function AppShell() {
               <NavLink
                 key={item.path}
                 to={`/${item.path}`}
+                onMouseEnter={() => preloadRoute(item.path)}
+                onTouchStart={() => preloadRoute(item.path)}
                 className={({ isActive }) =>
                   `group flex items-center justify-between rounded-lg px-3 py-2.5 font-medium transition ${
                     isActive
@@ -176,6 +185,8 @@ export default function AppShell() {
             <NavLink
               key={item.path}
               to={`/${item.path}`}
+              onMouseEnter={() => preloadRoute(item.path)}
+              onTouchStart={() => preloadRoute(item.path)}
               className={({ isActive }) =>
                 `whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium ${
                   isActive ? 'bg-walnut-800 text-gold-400' : 'bg-cream-100 text-walnut-700'
@@ -187,9 +198,11 @@ export default function AppShell() {
           ))}
         </nav>
 
-        {/* Content View */}
-        <main className="flex-1 p-6">
-          <Outlet />
+        {/* Content View - Suspense applied exclusively to right side panel */}
+        <main className="flex-1 p-6 relative">
+          <Suspense fallback={<ContentSkeleton />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
