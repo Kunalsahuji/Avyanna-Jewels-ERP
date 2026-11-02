@@ -67,7 +67,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <p className="font-display text-lg text-walnut-700">Loading Tvisha ERP Dashboard…</p>
+        <p className="font-display text-lg text-walnut-700">Loading Avyanna ERP Dashboard…</p>
       </div>
     );
   }
