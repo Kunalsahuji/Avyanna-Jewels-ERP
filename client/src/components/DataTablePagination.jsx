@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 /**
- * Enterprise-grade pagination controls matching Tvisha luxury theme
+ * Enterprise-grade pagination controls matching Avyanna Jewels luxury theme
  */
 export function DataTablePagination({
   page = 1,
