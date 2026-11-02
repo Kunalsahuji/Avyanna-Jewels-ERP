@@ -112,6 +112,4 @@ export const modules = [
   },
 ];
 
-export const placeholderModules = [
-  { path: 'masters', title: 'Masters', description: 'System master settings: Karigar masters, stone types, purity rates, and departments.' },
-];
+export const placeholderModules = [];
