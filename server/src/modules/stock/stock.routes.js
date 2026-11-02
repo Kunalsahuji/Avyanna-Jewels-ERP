@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { protect, restrictTo } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { crudController } from '../../common/crud.controller.js';
-import { idParam, objectId } from '../../common/schemas.js';
+import { idParam, objectId, optionalObjectId } from '../../common/schemas.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import { ITEM_TYPES, PURITY_OPTIONS, VAULT_LOCATIONS, STOCK_STATUS } from './stock.model.js';
 import { stockService as svc } from './stock.service.js';
@@ -22,7 +22,7 @@ const createSchema = z.object({
   status: z.enum(STOCK_STATUS).default('in_stock'),
   valuation: z.coerce.number().nonnegative().default(0),
   costPrice: z.coerce.number().nonnegative().default(0),
-  assignedTo: objectId.optional().nullable(),
+  assignedTo: optionalObjectId,
 });
 
 const updateSchema = createSchema.partial();

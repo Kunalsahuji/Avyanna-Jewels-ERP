@@ -20,12 +20,15 @@ class TicketService extends BaseService {
       .join('')
       .toUpperCase();
 
-    const ticketNo = `TJ${userPrefix}${dateStr}H${seq}`;
+    const ticketNo = `AV${userPrefix}${dateStr}H${seq}`;
+
+    const cleanData = { ...data };
+    if (!cleanData.assignedTo) delete cleanData.assignedTo;
 
     return [
       {
-        dueDate: data.dueDate || addDays(new Date(), 3),
-        ...data,
+        dueDate: cleanData.dueDate || addDays(new Date(), 3),
+        ...cleanData,
         ticketNo,
         raisedBy: user._id,
       },

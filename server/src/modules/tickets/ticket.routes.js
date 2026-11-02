@@ -3,18 +3,18 @@ import { z } from 'zod';
 import { protect, restrictTo } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { crudController } from '../../common/crud.controller.js';
-import { idParam, objectId } from '../../common/schemas.js';
+import { idParam, objectId, optionalObjectId, optionalDate } from '../../common/schemas.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import { TICKET_STATUS, PRIORITY } from './ticket.model.js';
 import { ticketService as svc } from './ticket.service.js';
 
 const createSchema = z.object({
   title: z.string().min(3),
-  description: z.string().optional(),
+  description: z.string().optional().default(''),
   department: z.string().default('IT'),
-  assignedTo: objectId.optional(),
+  assignedTo: optionalObjectId,
   priority: z.enum(PRIORITY).default('medium'),
-  dueDate: z.coerce.date().optional(),
+  dueDate: optionalDate,
 });
 
 const updateSchema = createSchema.partial().extend({

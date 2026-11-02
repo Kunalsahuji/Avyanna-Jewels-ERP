@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { protect, restrictTo } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { crudController } from '../../common/crud.controller.js';
-import { idParam, objectId } from '../../common/schemas.js';
+import { idParam, objectId, optionalObjectId } from '../../common/schemas.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import {
   PRODUCTION_STAGES,
@@ -21,7 +21,7 @@ const createSchema = z.object({
   purity: z.enum(PURITY_OPTIONS).default('18K'),
   currentStage: z.enum(PRODUCTION_STAGES).default('cad_design'),
   priority: z.enum(JOB_PRIORITY).default('medium'),
-  assignedKarigar: objectId.optional().nullable(),
+  assignedKarigar: optionalObjectId,
   dueDate: z.coerce.date(),
   initialGoldWeight: z.coerce.number().positive(),
   currentGoldWeight: z.coerce.number().positive().optional(),
@@ -35,7 +35,7 @@ const updateSchema = createSchema.partial();
 
 const advanceSchema = z.object({
   nextStage: z.enum(PRODUCTION_STAGES),
-  karigarId: objectId.optional().nullable(),
+  karigarId: optionalObjectId,
   returnedWeight: z.coerce.number().positive().optional(),
   notes: z.string().max(500).optional(),
 });
