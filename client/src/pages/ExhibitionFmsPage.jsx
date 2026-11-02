@@ -275,7 +275,7 @@ export default function ExhibitionFmsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <nav className="mb-1 text-xs font-medium text-walnut-500">
-            <span>Tvisha ERP</span>
+            <span>Avyanna ERP</span>
             <span className="mx-2">›</span>
             <span className="text-gold-700 font-semibold">Exhibition FMS</span>
           </nav>
