@@ -17,7 +17,7 @@ export const env = {
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
-  seedAdminEmail: process.env.SEED_ADMIN_EMAIL || 'rahul@tvishajewlz.com',
+  seedAdminEmail: process.env.SEED_ADMIN_EMAIL || 'devraj@avyannajewels.com',
   seedPassword: process.env.SEED_DEFAULT_PASSWORD || 'Password@123',
-  seedDomain: process.env.SEED_DOMAIN || 'tvishajewlz.com',
+  seedDomain: process.env.SEED_DOMAIN || 'avyannajewels.com',
 };
