@@ -114,6 +114,5 @@ export const modules = [
 
 export const placeholderModules = [
   { path: 'mis-scoring', title: 'MIS Scoring', description: 'Executive MIS scoring, employee KPIs, and operational performance indexes.' },
-  { path: 'attendance', title: 'Attendance', description: 'Biometric punches, work shifts, overtime tracking, and leave management.' },
   { path: 'masters', title: 'Masters', description: 'System master settings: Karigar masters, stone types, purity rates, and departments.' },
 ];
