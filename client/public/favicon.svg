@@ -1,5 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="20" fill="#21160d"/>
-  <text x="50%" y="68%" font-family="Georgia,serif" font-size="56" font-weight="bold" font-style="italic" fill="#d3b25e" text-anchor="middle">TJ</text>
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fae39b"/>
+      <stop offset="50%" stop-color="#d4aa48"/>
+      <stop offset="100%" stop-color="#9a6e22"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#281a0e"/>
+      <stop offset="100%" stop-color="#130b05"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Luxury Frame -->
+  <rect width="100" height="100" rx="22" fill="url(#bgGrad)"/>
+  <rect x="2.5" y="2.5" width="95" height="95" rx="19.5" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" stroke-opacity="0.4"/>
+  
+  <!-- Diamond Jewel Pip Top -->
+  <polygon points="50,14 56.5,21.5 50,29 43.5,21.5" fill="url(#goldGrad)"/>
+  
+  <!-- Avyanna Monogram AV -->
+  <text x="50" y="74" font-family="'Cormorant Garamond', Georgia, serif" font-size="50" font-weight="700" font-style="italic" letter-spacing="-1.5" fill="url(#goldGrad)" text-anchor="middle">AV</text>
 </svg>
-
