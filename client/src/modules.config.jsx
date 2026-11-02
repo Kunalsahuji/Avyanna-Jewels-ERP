@@ -118,7 +118,6 @@ export const placeholderModules = [
   { path: 'supplier-fms', title: 'Supplier FMS', description: 'Supplier lifecycle, bullion/gemstone purchases, and job work orders.' },
   { path: 'exhibition-fms', title: 'Exhibition FMS', description: 'Exhibition booking, jewelry showcase allocations, and event sales tally.' },
   { path: 'pre-exhibition-fms', title: 'Pre Exhibition FMS', description: 'Event preparation checklists, transit insurance, and booth logistics.' },
-  { path: 'stock-management', title: 'Stock Management', description: 'Live jewelry inventory, vault tracking, weight verifications, and barcode lot auditing.' },
   { path: 'city-transfer-approval', title: 'City Transfer Approval', description: 'Inter-branch jewelry transfers, digital gate passes, and vault transit authorizations.' },
   { path: 'attendance', title: 'Attendance', description: 'Biometric punches, work shifts, overtime tracking, and leave management.' },
   { path: 'masters', title: 'Masters', description: 'System master settings: Karigar masters, stone types, purity rates, and departments.' },
