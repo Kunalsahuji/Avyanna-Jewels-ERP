@@ -32,12 +32,17 @@ export class BaseService {
   async list(user, q) {
     const { dateField, openStatuses, searchFields, populate } = this.cfg;
     const page = Math.max(Number(q.page) || 1, 1);
-    const limit = Math.min(Number(q.limit) || 20, 100);
+    const limit = Math.min(Math.max(Number(q.limit) || 20, 1), 100);
     const and = [this.scope(user)];
 
     if (q.status) and.push({ status: q.status });
     if (q.category) and.push({ category: q.category });
     if (q.assignedTo && user.role !== 'doer') and.push({ [this.cfg.assigneeField]: q.assignedTo });
+    if (q.location) and.push({ location: q.location });
+    if (q.itemType) and.push({ itemType: q.itemType });
+    if (q.purity) and.push({ purity: q.purity });
+    if (q.priority) and.push({ priority: q.priority });
+    if (q.stage) and.push({ stage: q.stage });
     if (q.overdue === 'true') and.push({ status: { $in: openStatuses }, [dateField]: { $lt: startOfDay() } });
     if (q.from || q.to) {
       and.push({
@@ -51,12 +56,27 @@ export class BaseService {
       and.push({ $or: searchFields.map((f) => ({ [f]: { $regex: escapeRegex(q.search), $options: 'i' } })) });
     }
 
+    // Dynamic, injection-safe sorting
+    let sortOptions = { [dateField]: -1 };
+    if (q.sortBy && typeof q.sortBy === 'string') {
+      const isClean = /^[a-zA-Z0-9_.]+$/.test(q.sortBy);
+      if (isClean) {
+        const order = q.sortOrder === 'asc' ? 1 : -1;
+        sortOptions = { [q.sortBy]: order };
+      }
+    }
+
     const filter = { $and: and };
     const [items, total] = await Promise.all([
-      this.Model.find(filter).sort({ [dateField]: -1 }).skip((page - 1) * limit).limit(limit).populate(populate).lean(),
+      this.Model.find(filter)
+        .sort(sortOptions)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate(populate)
+        .lean(),
       this.Model.countDocuments(filter),
     ]);
-    return { items, page, limit, total, pages: Math.ceil(total / limit) };
+    return { items, page, limit, total, pages: Math.ceil(total / limit) || 1 };
   }
 
   async stats(user, q = {}) {
