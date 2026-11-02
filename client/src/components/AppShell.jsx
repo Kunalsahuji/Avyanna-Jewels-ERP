@@ -73,16 +73,16 @@ export default function AppShell() {
           {!collapsed ? (
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-gold-400 via-gold-500 to-gold-700 text-walnut-950 shadow-md">
-                <span className="font-display text-xl font-bold italic tracking-tight">TJ</span>
+                <span className="font-display text-xl font-bold italic tracking-tight">AV</span>
               </div>
               <div>
-                <span className="block font-display text-lg font-bold tracking-widest text-cream-50">TVISHA JEWLZ</span>
+                <span className="block font-display text-lg font-bold tracking-widest text-cream-50">AVYANNA JEWELS</span>
                 <span className="block text-[10px] tracking-widest text-gold-400/80 uppercase">Enterprise ERP</span>
               </div>
             </div>
           ) : (
             <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-gold-500 text-walnut-950 font-bold">
-              TJ
+              AV
             </div>
           )}
 
@@ -166,7 +166,7 @@ export default function AppShell() {
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-cream-200/80 bg-white/95 px-6 backdrop-blur-sm">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs font-medium text-walnut-700/80">
-            <span className="hover:text-walnut-900">Tvisha ERP</span>
+            <span className="hover:text-walnut-900">Avyanna ERP</span>
             <span className="text-walnut-400">&gt;</span>
             <span className="font-semibold text-walnut-950">{currentNav.title}</span>
           </div>
