@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useList, useStats, useResourceMutation, useUsers } from '../api/hooks.js';
 import { Badge, Modal, StatCard } from './ui.jsx';
 import { isOverdue } from '../lib.js';
+import { DataTablePagination, SortableHeader } from './DataTablePagination.jsx';
 
 function CreateForm({ config, onDone }) {
   const { data: users = [] } = useUsers();
@@ -50,7 +51,15 @@ function CreateForm({ config, onDone }) {
 
 export default function ModulePage({ config }) {
   const { isStaff, user } = useAuth();
-  const [filters, setFilters] = useState(() => ({ status: '', search: '', page: 1, ...(config.defaultQuery || {}) }));
+  const [filters, setFilters] = useState(() => ({
+    status: '',
+    search: '',
+    page: 1,
+    limit: 20,
+    sortBy: '',
+    sortOrder: 'desc',
+    ...(config.defaultQuery || {}),
+  }));
   const [creating, setCreating] = useState(false);
   const params = Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== ''));
 
@@ -60,6 +69,9 @@ export default function ModulePage({ config }) {
 
   const canCreate = !config.staffCreateOnly || isStaff;
   const setFilter = (patch) => setFilters((f) => ({ ...f, ...patch, page: 1 }));
+  const handleSort = (field, order) => {
+    setFilters((f) => ({ ...f, sortBy: field, sortOrder: order, page: 1 }));
+  };
   const rowActions = (row) => {
     const waiting = row.status === config.approvalStatus;
     const open = row.status !== config.doneStatus && row.status !== 'shifted';
@@ -97,10 +109,27 @@ export default function ModulePage({ config }) {
 
       <div className="card overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-walnut-800 text-cream-100">
+          <thead className="bg-[#1f140a] text-cream-100">
             <tr>
-              {config.columns.map((c) => <th key={c.label} className="px-4 py-3 font-semibold">{c.label}</th>)}
-              <th className="px-4 py-3 font-semibold">Status</th>
+              {config.columns.map((c) => (
+                <SortableHeader
+                  key={c.label}
+                  field={c.field || c.label.toLowerCase().replace(/\s+/g, '')}
+                  currentSortBy={filters.sortBy}
+                  currentSortOrder={filters.sortOrder}
+                  onSort={handleSort}
+                >
+                  {c.label}
+                </SortableHeader>
+              ))}
+              <SortableHeader
+                field="status"
+                currentSortBy={filters.sortBy}
+                currentSortOrder={filters.sortOrder}
+                onSort={handleSort}
+              >
+                Status
+              </SortableHeader>
               <th className="px-4 py-3 text-right font-semibold">Actions</th>
             </tr>
           </thead>
@@ -135,14 +164,15 @@ export default function ModulePage({ config }) {
         </table>
       </div>
 
-      {data && data.pages > 1 && (
-        <div className="flex items-center justify-between text-sm">
-          <span>Showing page {data.page} of {data.pages} · {data.total} items</span>
-          <div className="flex gap-2">
-            <button className="btn-ghost" disabled={data.page <= 1} onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}>Previous</button>
-            <button className="btn-ghost" disabled={data.page >= data.pages} onClick={() => setFilters((f) => ({ ...f, page: f.page + 1 }))}>Next</button>
-          </div>
-        </div>
+      {data && (
+        <DataTablePagination
+          page={data.page || 1}
+          pages={data.pages || 1}
+          total={data.total || 0}
+          limit={filters.limit || 20}
+          onPageChange={(p) => setFilters((f) => ({ ...f, page: p }))}
+          onLimitChange={(lim) => setFilters((f) => ({ ...f, limit: lim, page: 1 }))}
+        />
       )}
 
       {creating && (
