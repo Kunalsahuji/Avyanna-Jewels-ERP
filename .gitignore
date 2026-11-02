@@ -68,3 +68,7 @@ Thumbs.db
 
 # docs
 docs
+
+# Credentials & Sensitive reference files
+CREDENTIALS.md
+credentials.md
