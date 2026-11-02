@@ -270,7 +270,7 @@ export default function StockManagementPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `tvisha_stock_inventory_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `avyanna_stock_inventory_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
