@@ -16,7 +16,7 @@ const domain = env.seedDomain;
 const toEmail = (handle) => `${handle}@${domain}`;
 
 const users = await User.create([
-  { name: 'Rahul Yadav', email: env.seedAdminEmail, password: pw, role: 'admin', department: 'Management' },
+  { name: 'Devraj Sharma', email: env.seedAdminEmail, password: pw, role: 'admin', department: 'Management' },
   { name: 'Aarti Panchal', email: toEmail('aarti'), password: pw, role: 'admin', department: 'Operations' },
   { name: 'Abhimanyu Singh Krishnawat', email: toEmail('abhimanyu'), password: pw, role: 'admin', department: 'Operations' },
   { name: 'Meera Shah', email: toEmail('meera'), password: pw, role: 'manager', department: 'Operations' },
@@ -37,16 +37,16 @@ const now = new Date();
 
 // 1. Delegations
 const delegationsData = [
-  { taskId: 'TSK-000010', description: 'test', assignedTo: userMap['Harsh Saraswat']._id, assignedBy: userMap['Rahul Yadav']._id, dueDate: now, status: 'pending', priority: 'high', revisions: 0 },
+  { taskId: 'TSK-000010', description: 'test', assignedTo: userMap['Harsh Saraswat']._id, assignedBy: userMap['Devraj Sharma']._id, dueDate: now, status: 'pending', priority: 'high', revisions: 0 },
   { taskId: 'TSK-000009', description: 'purchase of diamonds princess cut and round cut', assignedTo: userMap['Amit Agarwal']._id, assignedBy: userMap['Aarti Panchal']._id, dueDate: addDays(now, -80), status: 'pending', priority: 'critical', revisions: 0 },
   { taskId: 'TSK-000008', description: 'Hyderabad exhibition sheet', assignedTo: userMap['Ratan Singh Bijarniya']._id, assignedBy: userMap['Aarti Panchal']._id, dueDate: addDays(now, -90), status: 'pending', priority: 'high', revisions: 0 },
   { taskId: 'TSK-000007', description: 'fix the things in new bombay office - wifi...', assignedTo: userMap['Amit Agarwal']._id, assignedBy: userMap['Aarti Panchal']._id, dueDate: addDays(now, -91), status: 'pending', priority: 'high', revisions: 0 },
   { taskId: 'TSK-000006', description: 'need to buy the fridge , printer for bombay office', assignedTo: userMap['Amit Agarwal']._id, assignedBy: userMap['Aarti Panchal']._id, dueDate: addDays(now, -91), status: 'pending', priority: 'high', revisions: 0 },
   { taskId: 'TSK-000005', description: 'start customer calling', assignedTo: userMap['Himanshu']._id, assignedBy: userMap['Aarti Panchal']._id, dueDate: addDays(now, -135), status: 'completed', priority: 'medium', revisions: 0, completedAt: addDays(now, -134) },
-  { taskId: 'TSK-000004', description: 'Verify safe gold bullion weights', assignedTo: userMap['Ratan Singh Bijarniya']._id, assignedBy: userMap['Rahul Yadav']._id, dueDate: addDays(now, -2), status: 'completed', priority: 'high', revisions: 0, completedAt: addDays(now, -1) },
-  { taskId: 'TSK-000003', description: 'Update festival collection pricing catalogue', assignedTo: userMap['Aliya']._id, assignedBy: userMap['Rahul Yadav']._id, dueDate: addDays(now, -5), status: 'completed', priority: 'medium', revisions: 0, completedAt: addDays(now, -4) },
-  { taskId: 'TSK-000002', description: 'Prepare showroom CCTV security audit report', assignedTo: userMap['Amit Agarwal']._id, assignedBy: userMap['Rahul Yadav']._id, dueDate: addDays(now, 2), status: 'pending', priority: 'low', revisions: 0 },
-  { taskId: 'TSK-000001', description: 'Vendor payment reconciliations for bullion supplier', assignedTo: userMap['Priya Sogarwal']._id, assignedBy: userMap['Rahul Yadav']._id, dueDate: addDays(now, 1), status: 'pending', priority: 'high', revisions: 0 },
+  { taskId: 'TSK-000004', description: 'Verify safe gold bullion weights', assignedTo: userMap['Ratan Singh Bijarniya']._id, assignedBy: userMap['Devraj Sharma']._id, dueDate: addDays(now, -2), status: 'completed', priority: 'high', revisions: 0, completedAt: addDays(now, -1) },
+  { taskId: 'TSK-000003', description: 'Update festival collection pricing catalogue', assignedTo: userMap['Aliya']._id, assignedBy: userMap['Devraj Sharma']._id, dueDate: addDays(now, -5), status: 'completed', priority: 'medium', revisions: 0, completedAt: addDays(now, -4) },
+  { taskId: 'TSK-000002', description: 'Prepare showroom CCTV security audit report', assignedTo: userMap['Amit Agarwal']._id, assignedBy: userMap['Devraj Sharma']._id, dueDate: addDays(now, 2), status: 'pending', priority: 'low', revisions: 0 },
+  { taskId: 'TSK-000001', description: 'Vendor payment reconciliations for bullion supplier', assignedTo: userMap['Priya Sogarwal']._id, assignedBy: userMap['Devraj Sharma']._id, dueDate: addDays(now, 1), status: 'pending', priority: 'high', revisions: 0 },
 ];
 await Delegation.insertMany(delegationsData);
 
@@ -115,14 +115,14 @@ await Checklist.insertMany(checklistData);
 
 // 3. Help Tickets (Matching screenshot late items)
 const ticketsData = [
-  { ticketNo: 'TJP260526H101', title: 'task', raisedBy: userMap['Rahul Yadav']._id, assignedTo: userMap['Amit Agarwal']._id, priority: 'high', status: 'open', dueDate: addDays(now, -157) },
+  { ticketNo: 'TJP260526H101', title: 'task', raisedBy: userMap['Devraj Sharma']._id, assignedTo: userMap['Amit Agarwal']._id, priority: 'high', status: 'open', dueDate: addDays(now, -157) },
   { ticketNo: 'TJCRK260526H102', title: 'task', raisedBy: userMap['Ratan Singh Bijarniya']._id, assignedTo: userMap['Amit Agarwal']._id, priority: 'high', status: 'open', dueDate: addDays(now, -156) },
   { ticketNo: 'TJA280526H105', title: 'not able to access data', raisedBy: userMap['Abhimanyu Singh Krishnawat']._id, assignedTo: userMap['Amit Agarwal']._id, priority: 'critical', status: 'open', dueDate: addDays(now, -155) },
   { ticketNo: 'TJAA280526H103', title: 'testing', raisedBy: userMap['Amit Agarwal']._id, assignedTo: userMap['Amit Agarwal']._id, priority: 'medium', status: 'open', dueDate: addDays(now, -155) },
   { ticketNo: 'TJH280526H104', title: 'yuiopghjk', raisedBy: userMap['Himanshu']._id, assignedTo: userMap['Amit Agarwal']._id, priority: 'low', status: 'open', dueDate: addDays(now, -155) },
   { ticketNo: 'TJQC149', title: 'Quality Control (Open Setting)', raisedBy: userMap['Mahesh Sharma']._id, assignedTo: userMap['Mahesh Sharma']._id, priority: 'high', status: 'review', dueDate: addDays(now, -149) },
   { ticketNo: 'TJ801', title: 'Billing printer thermal roll jam in counter 2', raisedBy: userMap['Aliya']._id, assignedTo: userMap['Amit Agarwal']._id, priority: 'high', status: 'open', dueDate: addDays(now, -1) },
-  { ticketNo: 'TJ802', title: 'Weighing scale calibration error in production room', raisedBy: userMap['Mahesh Sharma']._id, assignedTo: userMap['Rahul Yadav']._id, priority: 'critical', status: 'review', dueDate: addDays(now, -2) },
+  { ticketNo: 'TJ802', title: 'Weighing scale calibration error in production room', raisedBy: userMap['Mahesh Sharma']._id, assignedTo: userMap['Devraj Sharma']._id, priority: 'critical', status: 'review', dueDate: addDays(now, -2) },
 ];
 await Ticket.insertMany(ticketsData);
 
