@@ -114,7 +114,6 @@ export const modules = [
 
 export const placeholderModules = [
   { path: 'mis-scoring', title: 'MIS Scoring', description: 'Executive MIS scoring, employee KPIs, and operational performance indexes.' },
-  { path: 'production-fms', title: 'Production FMS', description: 'Factory manufacturing system: Casting, Filing, Diamond Setting, Polishing & Quality Control.' },
   { path: 'supplier-fms', title: 'Supplier FMS', description: 'Supplier lifecycle, bullion/gemstone purchases, and job work orders.' },
   { path: 'exhibition-fms', title: 'Exhibition FMS', description: 'Exhibition booking, jewelry showcase allocations, and event sales tally.' },
   { path: 'pre-exhibition-fms', title: 'Pre Exhibition FMS', description: 'Event preparation checklists, transit insurance, and booth logistics.' },
