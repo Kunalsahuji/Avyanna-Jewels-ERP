@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useList, useStats, useResourceMutation, useUsers } from '../api/hooks.js';
 import { fmtDate } from '../lib.js';
+import { DataTablePagination, SortableHeader } from '../components/DataTablePagination.jsx';
 import {
   Package,
   Gem,
@@ -74,6 +75,12 @@ export default function StockManagementPage() {
   const [itemTypeFilter, setItemTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
+  // Pagination & Sorting state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc');
+
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
   const [transferParcel, setTransferParcel] = useState(null);
@@ -117,14 +124,20 @@ export default function StockManagementPage() {
     [users]
   );
 
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+    setPage(1);
+  };
+
   const queryParams = useMemo(() => {
-    const q = {};
+    const q = { page, limit, sortBy, sortOrder };
     if (locationFilter) q.location = locationFilter;
     if (itemTypeFilter) q.itemType = itemTypeFilter;
     if (statusFilter) q.status = statusFilter;
     if (search) q.search = search;
     return q;
-  }, [locationFilter, itemTypeFilter, statusFilter, search]);
+  }, [locationFilter, itemTypeFilter, statusFilter, search, page, limit, sortBy, sortOrder]);
 
   const { data: listData, isLoading } = useList('stock', queryParams);
   const { data: stats } = useStats('stock', queryParams);
@@ -470,15 +483,64 @@ export default function StockManagementPage() {
       <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="border-b border-cream-200 bg-cream-100 text-walnut-700">
+            <thead className="bg-[#1f140a] text-cream-100">
               <tr>
-                <th className="px-4 py-3 font-bold">Parcel &amp; Barcode</th>
-                <th className="px-4 py-3 font-bold">Jewelry Item</th>
-                <th className="px-4 py-3 font-bold">Purity &amp; Wt (g)</th>
-                <th className="px-4 py-3 font-bold">Diamonds (ct)</th>
-                <th className="px-4 py-3 font-bold">Vault Location</th>
-                <th className="px-4 py-3 font-bold">Status</th>
-                <th className="px-4 py-3 font-bold">Valuation</th>
+                <SortableHeader
+                  field="parcelId"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Parcel &amp; Barcode
+                </SortableHeader>
+                <SortableHeader
+                  field="title"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Jewelry Item
+                </SortableHeader>
+                <SortableHeader
+                  field="grossWeight"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Purity &amp; Wt (g)
+                </SortableHeader>
+                <SortableHeader
+                  field="diamondCarat"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Diamonds (ct)
+                </SortableHeader>
+                <SortableHeader
+                  field="location"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Vault Location
+                </SortableHeader>
+                <SortableHeader
+                  field="status"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Status
+                </SortableHeader>
+                <SortableHeader
+                  field="valuation"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                >
+                  Valuation
+                </SortableHeader>
                 <th className="px-4 py-3 text-center font-bold">Actions</th>
               </tr>
             </thead>
@@ -640,6 +702,20 @@ export default function StockManagementPage() {
             </tbody>
           </table>
         </div>
+
+        {listData && (
+          <DataTablePagination
+            page={listData.page || page}
+            pages={listData.pages || 1}
+            total={listData.total || parcels.length}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(l) => {
+              setLimit(l);
+              setPage(1);
+            }}
+          />
+        )}
       </div>
 
       {/* Modal 1: Intake New Parcel */}
