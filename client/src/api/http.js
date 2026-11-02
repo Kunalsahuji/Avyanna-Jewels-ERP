@@ -3,7 +3,11 @@ import axios from 'axios';
 export const TOKEN_KEY = 'erp_token';
 
 // Support Render/Vercel production environments with automatic fallback to local Vite proxy
-let apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '/api').trim();
+let apiBase = (
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? 'https://avyanna-jewels-erp.onrender.com/api' : '/api')
+).trim();
 if (apiBase.startsWith('http') && !apiBase.endsWith('/api') && !apiBase.includes('/api/')) {
   apiBase = `${apiBase.replace(/\/$/, '')}/api`;
 }
