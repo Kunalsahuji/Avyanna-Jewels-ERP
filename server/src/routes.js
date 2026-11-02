@@ -12,6 +12,7 @@ import supplier from './modules/supplier/supplier.routes.js';
 import exhibition from './modules/exhibition/exhibition.routes.js';
 import preExhibition from './modules/preExhibition/preExhibition.routes.js';
 import attendance from './modules/attendance/attendance.routes.js';
+import mis from './modules/mis/mis.routes.js';
 
 const router = Router();
 router.get('/health', (req, res) => res.json({ ok: true, uptime: process.uptime() }));
@@ -31,5 +32,7 @@ router.use('/exhibition-fms', exhibition);
 router.use('/pre-exhibition', preExhibition);
 router.use('/pre-exhibition-fms', preExhibition);
 router.use('/attendance', attendance);
+router.use('/mis', mis);
+router.use('/mis-scoring', mis);
 
 export default router;
