@@ -76,6 +76,21 @@ export function TableSkeleton({ rows = 6, cols = 7 }) {
   );
 }
 
+export function ContentSkeleton() {
+  return (
+    <div className="space-y-6 transition-opacity duration-150">
+      {/* Subtle top luxury gold progress bar */}
+      <div className="fixed top-14 left-0 right-0 z-40 h-0.5 bg-cream-200 overflow-hidden pointer-events-none">
+        <div className="h-full bg-gradient-to-r from-gold-400 via-gold-600 to-gold-400 animate-pulse w-full"></div>
+      </div>
+      <PageHeaderSkeleton />
+      <KpiCardsSkeleton count={6} />
+      <FilterBarSkeleton />
+      <TableSkeleton rows={7} cols={6} />
+    </div>
+  );
+}
+
 export function PageSkeleton() {
   return (
     <div className="space-y-6">
