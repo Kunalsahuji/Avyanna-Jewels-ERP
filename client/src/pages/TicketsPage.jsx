@@ -44,6 +44,7 @@ export default function TicketsPage() {
   const [commentTicket, setCommentTicket] = useState(null);
   const [newCommentText, setNewCommentText] = useState('');
   const [resolutionNotes, setResolutionNotes] = useState('');
+  const [submitError, setSubmitError] = useState('');
 
   // Form state
   const [newTicket, setNewTicket] = useState({
@@ -90,9 +91,20 @@ export default function TicketsPage() {
   // Submit new ticket
   const handleRaiseSubmit = (e) => {
     e.preventDefault();
-    create.mutate(newTicket, {
+    setSubmitError('');
+    const payload = {
+      title: newTicket.title.trim(),
+      description: newTicket.description?.trim() || '',
+      department: newTicket.department || 'IT',
+      priority: newTicket.priority || 'medium',
+      ...(newTicket.assignedTo ? { assignedTo: newTicket.assignedTo } : {}),
+      ...(newTicket.dueDate ? { dueDate: newTicket.dueDate } : {}),
+    };
+
+    create.mutate(payload, {
       onSuccess: () => {
         setShowRaiseModal(false);
+        setSubmitError('');
         setNewTicket({
           title: '',
           description: '',
@@ -101,6 +113,14 @@ export default function TicketsPage() {
           priority: 'medium',
           dueDate: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
         });
+      },
+      onError: (err) => {
+        const msg =
+          err.response?.data?.details?.[0]?.message ||
+          err.response?.data?.message ||
+          err.userMessage ||
+          'Failed to raise ticket';
+        setSubmitError(msg);
       },
     });
   };
@@ -677,12 +697,23 @@ export default function TicketsPage() {
               <h3 className="font-display text-xl font-bold text-walnut-950">
                 Raise Service / Help Ticket
               </h3>
-              <button onClick={() => setShowRaiseModal(false)} className="rounded p-1 text-walnut-400 hover:text-walnut-900">
+              <button
+                onClick={() => {
+                  setShowRaiseModal(false);
+                  setSubmitError('');
+                }}
+                className="rounded p-1 text-walnut-400 hover:text-walnut-900"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleRaiseSubmit} className="mt-4 space-y-3">
+              {submitError && (
+                <div className="rounded-md bg-rose-50 border border-rose-200 p-2.5 text-xs text-rose-700">
+                  {submitError}
+                </div>
+              )}
               <div>
                 <label className="label">Issue Title</label>
                 <input
