@@ -186,7 +186,7 @@ export default function DelegationPage() {
     const createdDate = remarkTask.createdAt || remarkTask.dueDate;
     events.push({
       date: createdDate,
-      author: remarkTask.assignedBy?.name || 'Rahul Yadav',
+      author: remarkTask.assignedBy?.name || 'Devraj Sharma',
       badge: 'CREATED',
       description: `Task assigned to ${remarkTask.assignedTo?.name || 'Staff'}.`,
     });
