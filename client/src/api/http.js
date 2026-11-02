@@ -2,7 +2,13 @@ import axios from 'axios';
 
 export const TOKEN_KEY = 'erp_token';
 
-const http = axios.create({ baseURL: '/api' });
+// Support Render/Vercel production environments with automatic fallback to local Vite proxy
+let apiBase = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '/api').trim();
+if (apiBase.startsWith('http') && !apiBase.endsWith('/api') && !apiBase.includes('/api/')) {
+  apiBase = `${apiBase.replace(/\/$/, '')}/api`;
+}
+
+const http = axios.create({ baseURL: apiBase });
 
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY);
