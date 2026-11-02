@@ -10,6 +10,7 @@ import cityTransfers from './modules/cityTransfer/cityTransfer.routes.js';
 import production from './modules/production/production.routes.js';
 import supplier from './modules/supplier/supplier.routes.js';
 import exhibition from './modules/exhibition/exhibition.routes.js';
+import preExhibition from './modules/preExhibition/preExhibition.routes.js';
 
 const router = Router();
 router.get('/health', (req, res) => res.json({ ok: true, uptime: process.uptime() }));
@@ -26,5 +27,7 @@ router.use('/supplier', supplier);
 router.use('/supplier-fms', supplier);
 router.use('/exhibition', exhibition);
 router.use('/exhibition-fms', exhibition);
+router.use('/pre-exhibition', preExhibition);
+router.use('/pre-exhibition-fms', preExhibition);
 
 export default router;
