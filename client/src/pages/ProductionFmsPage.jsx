@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useList, useStats, useResourceMutation, useUsers } from '../api/hooks.js';
 import { fmtDate, isOverdue } from '../lib.js';
+import { DataTablePagination, SortableHeader } from '../components/DataTablePagination.jsx';
 import {
   Gem,
   Hammer,
@@ -76,6 +77,12 @@ export default function ProductionFmsPage() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'pipeline'
 
+  // Pagination & Sorting state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [sortBy, setSortBy] = useState('dueDate');
+  const [sortOrder, setSortOrder] = useState('asc');
+
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [advanceJobItem, setAdvanceJobItem] = useState(null);
@@ -118,14 +125,20 @@ export default function ProductionFmsPage() {
     [users]
   );
 
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+    setPage(1);
+  };
+
   const queryParams = useMemo(() => {
-    const q = {};
+    const q = { page, limit, sortBy, sortOrder };
     if (stageFilter) q.currentStage = stageFilter;
     if (priorityFilter) q.priority = priorityFilter;
     if (categoryFilter) q.category = categoryFilter;
     if (search) q.search = search;
     return q;
-  }, [stageFilter, priorityFilter, categoryFilter, search]);
+  }, [stageFilter, priorityFilter, categoryFilter, search, page, limit, sortBy, sortOrder]);
 
   const { data: listData, isLoading } = useList('production', queryParams);
   const { data: stats } = useStats('production', queryParams);
@@ -487,15 +500,57 @@ export default function ProductionFmsPage() {
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="border-b border-cream-200 bg-cream-100 text-walnut-700">
+              <thead className="bg-[#1f140a] text-cream-100">
                 <tr>
-                  <th className="px-4 py-3 font-bold">Job No &amp; Priority</th>
-                  <th className="px-4 py-3 font-bold">Design Code &amp; Title</th>
-                  <th className="px-4 py-3 font-bold">Current Stage &amp; Progress</th>
+                  <SortableHeader
+                    field="jobNo"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Job No &amp; Priority
+                  </SortableHeader>
+                  <SortableHeader
+                    field="itemTitle"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Design Code &amp; Title
+                  </SortableHeader>
+                  <SortableHeader
+                    field="currentStage"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Current Stage &amp; Progress
+                  </SortableHeader>
                   <th className="px-4 py-3 font-bold">Craftsman / Karigar</th>
-                  <th className="px-4 py-3 font-bold">Gold Wt &amp; Loss (g)</th>
-                  <th className="px-4 py-3 font-bold">Diamonds (ct)</th>
-                  <th className="px-4 py-3 font-bold">Due Date</th>
+                  <SortableHeader
+                    field="currentGoldWeight"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Gold Wt &amp; Loss (g)
+                  </SortableHeader>
+                  <SortableHeader
+                    field="totalDiamondsCarat"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Diamonds (ct)
+                  </SortableHeader>
+                  <SortableHeader
+                    field="dueDate"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Due Date
+                  </SortableHeader>
                   <th className="px-4 py-3 text-center font-bold">Actions</th>
                 </tr>
               </thead>
@@ -668,6 +723,20 @@ export default function ProductionFmsPage() {
               </tbody>
             </table>
           </div>
+
+          {listData && (
+            <DataTablePagination
+              page={listData.page || page}
+              pages={listData.pages || 1}
+              total={listData.total || jobs.length}
+              limit={limit}
+              onPageChange={setPage}
+              onLimitChange={(l) => {
+                setLimit(l);
+                setPage(1);
+              }}
+            />
+          )}
         </div>
       ) : (
         /* View 2: Pipeline Stages Kanban */
