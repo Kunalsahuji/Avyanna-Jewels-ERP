@@ -34,7 +34,7 @@ export const logger = winston.createLogger({
     errors({ stack: true }),
     json()
   ),
-  defaultMeta: { service: 'tvisha-erp-api' },
+  defaultMeta: { service: 'avyanna-erp-api' },
   transports: [
     // Error log file
     new winston.transports.File({
