@@ -29,7 +29,7 @@ function Protected({ children }) {
     return (
       <div className="min-h-screen bg-cream-50 p-6 flex flex-col items-center justify-center space-y-4">
         <div className="h-10 w-10 border-4 border-gold-400 border-t-gold-600 rounded-full animate-spin"></div>
-        <p className="text-xs font-semibold tracking-wider uppercase text-walnut-700">Loading Tvisha ERP…</p>
+        <p className="text-xs font-semibold tracking-wider uppercase text-walnut-700">Loading Avyanna ERP…</p>
       </div>
     );
   }
