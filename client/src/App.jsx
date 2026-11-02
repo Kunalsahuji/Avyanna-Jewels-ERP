@@ -70,51 +70,56 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <Suspense
-        fallback={
-          <div className="p-6 bg-cream-50 min-h-screen">
-            <PageSkeleton />
-          </div>
-        }
-      >
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            element={
-              <Protected>
-                <AppShell />
-              </Protected>
-            }
-          >
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="delegation" element={<DelegationPage />} />
-            <Route path="checklist" element={<ChecklistPage category="general" title="Checklist" />} />
-            <Route path="account-checklist" element={<ChecklistPage category="account" title="Account Checklist" />} />
-            <Route path="tickets" element={<TicketsPage />} />
-            <Route path="stock-management" element={<StockManagementPage />} />
-            <Route path="city-transfer-approval" element={<CityTransferApprovalPage />} />
-            <Route path="production-fms" element={<ProductionFmsPage />} />
-            <Route path="supplier-fms" element={<SupplierFmsPage />} />
-            <Route path="exhibition-fms" element={<ExhibitionFmsPage />} />
-            <Route path="pre-exhibition-fms" element={<PreExhibitionFmsPage />} />
-            <Route path="attendance" element={<AttendancePage />} />
-            <Route path="mis-scoring" element={<MisScoringPage />} />
-            <Route path="masters" element={<MastersPage />} />
-            {genericModules.map((m) => (
-              <Route key={m.path} path={m.path} element={<ModulePage config={m} />} />
-            ))}
-            {placeholderModules.map((p) => (
-              <Route
-                key={p.path}
-                path={p.path}
-                element={<ModulePlaceholder title={p.title} description={p.description} />}
-              />
-            ))}
-          </Route>
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <Suspense
+              fallback={
+                <div className="min-h-screen bg-cream-50 flex items-center justify-center">
+                  <div className="h-8 w-8 border-2 border-gold-400 border-t-gold-600 rounded-full animate-spin"></div>
+                </div>
+              }
+            >
+              <Login />
+            </Suspense>
+          }
+        />
+        <Route
+          element={
+            <Protected>
+              <AppShell />
+            </Protected>
+          }
+        >
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="delegation" element={<DelegationPage />} />
+          <Route path="checklist" element={<ChecklistPage category="general" title="Checklist" />} />
+          <Route path="account-checklist" element={<ChecklistPage category="account" title="Account Checklist" />} />
+          <Route path="tickets" element={<TicketsPage />} />
+          <Route path="stock-management" element={<StockManagementPage />} />
+          <Route path="city-transfer-approval" element={<CityTransferApprovalPage />} />
+          <Route path="production-fms" element={<ProductionFmsPage />} />
+          <Route path="supplier-fms" element={<SupplierFmsPage />} />
+          <Route path="exhibition-fms" element={<ExhibitionFmsPage />} />
+          <Route path="pre-exhibition-fms" element={<PreExhibitionFmsPage />} />
+          <Route path="attendance" element={<AttendancePage />} />
+          <Route path="mis-scoring" element={<MisScoringPage />} />
+          <Route path="masters" element={<MastersPage />} />
+          {genericModules.map((m) => (
+            <Route key={m.path} path={m.path} element={<ModulePage config={m} />} />
+          ))}
+          {placeholderModules.map((p) => (
+            <Route
+              key={p.path}
+              path={p.path}
+              element={<ModulePlaceholder title={p.title} description={p.description} />}
+            />
+          ))}
+        </Route>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
     </ErrorBoundary>
   );
 }
