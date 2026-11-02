@@ -263,7 +263,7 @@ export default function ProductionFmsPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `tvisha_production_jobs_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `avyanna_production_jobs_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1306,7 +1306,7 @@ export default function ProductionFmsPage() {
             {/* Pinned Bottom Footer */}
             <div className="border-t border-cream-200 bg-[#fbf7f2] px-6 py-3 flex justify-between items-center">
               <span className="text-[10px] font-mono text-walnut-400">
-                TVISHA JEWLZ FACTORY LEDGER
+                AVYANNA JEWELS FACTORY LEDGER
               </span>
               <button
                 type="button"
