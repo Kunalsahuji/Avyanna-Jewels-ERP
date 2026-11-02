@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import DelegationPage from './pages/DelegationPage.jsx';
 import ChecklistPage from './pages/ChecklistPage.jsx';
 import TicketsPage from './pages/TicketsPage.jsx';
+import StockManagementPage from './pages/StockManagementPage.jsx';
 import ModulePage from './components/ModulePage.jsx';
 import ModulePlaceholder from './components/ModulePlaceholder.jsx';
 import { modules, placeholderModules } from './modules.config.jsx';
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="checklist" element={<ChecklistPage category="general" title="Checklist" />} />
         <Route path="account-checklist" element={<ChecklistPage category="account" title="Account Checklist" />} />
         <Route path="tickets" element={<TicketsPage />} />
+        <Route path="stock-management" element={<StockManagementPage />} />
         {genericModules.map((m) => (
           <Route key={m.path} path={m.path} element={<ModulePage config={m} />} />
         ))}
