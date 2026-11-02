@@ -268,7 +268,7 @@ export default function CityTransferApprovalPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `tvisha_city_transfers_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `avyanna_city_transfers_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1024,7 +1024,7 @@ export default function CityTransferApprovalPage() {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-cream-200/90 font-normal">
-                    Tvisha Jewlz Inter-Branch Transit Pass &amp; Chain of Custody
+                    Avyanna Jewels Inter-Branch Transit Pass &amp; Chain of Custody
                   </p>
                 </div>
                 <button
