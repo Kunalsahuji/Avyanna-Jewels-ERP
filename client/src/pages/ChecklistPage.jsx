@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useList, useStats, usePerPerson, useResourceMutation, useUsers } from '../api/hooks.js';
 import { fmtDate, isOverdue } from '../lib.js';
+import { DataTablePagination, SortableHeader } from '../components/DataTablePagination.jsx';
 import {
   FileText,
   Clock,
@@ -34,6 +35,12 @@ export default function ChecklistPage({ category = 'general', title = 'Checklist
   const [selectedPerson, setSelectedPerson] = useState('');
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [daysWindow, setDaysWindow] = useState('30');
+
+  // Pagination & Sorting state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [sortBy, setSortBy] = useState('plannedDate');
+  const [sortOrder, setSortOrder] = useState('desc');
   
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
@@ -64,13 +71,19 @@ export default function ChecklistPage({ category = 'general', title = 'Checklist
     return { from: from.toISOString() };
   }, [daysWindow]);
 
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+    setPage(1);
+  };
+
   const queryParams = useMemo(() => {
-    const q = { category, ...dateParams };
+    const q = { category, page, limit, sortBy, sortOrder, ...dateParams };
     if (statusFilter) q.status = statusFilter;
     if (search) q.search = search;
     if (selectedPerson) q.assignedTo = selectedPerson;
     return q;
-  }, [category, dateParams, statusFilter, search, selectedPerson]);
+  }, [category, dateParams, statusFilter, search, selectedPerson, page, limit, sortBy, sortOrder]);
 
   const { data: listData, isLoading } = useList('checklists', queryParams);
   const { data: stats } = useStats('checklists', { category, ...dateParams });
@@ -507,11 +520,48 @@ export default function ChecklistPage({ category = 'general', title = 'Checklist
                   </th>
                   <th className="px-4 py-3">Assigned To</th>
                   <th className="px-4 py-3">Department</th>
-                  <th className="px-3 py-3">Task Id</th>
-                  <th className="px-3 py-3">Freq</th>
-                  <th className="px-4 py-3 min-w-[200px]">Task</th>
-                  <th className="px-4 py-3">Planned</th>
-                  <th className="px-3 py-3 text-center">Actual</th>
+                  <SortableHeader
+                    field="taskCode"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Task Id
+                  </SortableHeader>
+                  <SortableHeader
+                    field="frequency"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Freq
+                  </SortableHeader>
+                  <SortableHeader
+                    field="description"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                    className="min-w-[200px]"
+                  >
+                    Task
+                  </SortableHeader>
+                  <SortableHeader
+                    field="plannedDate"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                  >
+                    Planned
+                  </SortableHeader>
+                  <SortableHeader
+                    field="actualDate"
+                    currentSortBy={sortBy}
+                    currentSortOrder={sortOrder}
+                    onSort={handleSort}
+                    align="center"
+                  >
+                    Actual
+                  </SortableHeader>
                   <th className="px-3 py-3 text-center">Proof Required</th>
                   <th className="px-3 py-3 text-center">DOCUMENT</th>
                   <th className="px-3 py-3 text-center pr-4">MD Remark</th>
@@ -640,67 +690,96 @@ export default function ChecklistPage({ category = 'general', title = 'Checklist
               </tbody>
             </table>
           </div>
+          {listData && (
+            <DataTablePagination
+              page={listData.page || page}
+              pages={listData.pages || 1}
+              total={listData.total || tasks.length}
+              limit={limit}
+              onPageChange={setPage}
+              onLimitChange={(l) => {
+                setLimit(l);
+                setPage(1);
+              }}
+            />
+          )}
         </div>
       ) : (
         /* Cards View */
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {tasks.map((task) => {
-            const overdue = isOverdue(task.plannedDate) && task.status !== 'completed';
-            const isDone = task.status === 'completed';
-            return (
-              <div
-                key={task._id}
-                className="card flex flex-col justify-between p-4 shadow-sm transition hover:shadow-md"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-gold-700">{task.taskCode}</span>
-                    <span className="rounded bg-cream-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-walnut-700">
-                      {task.frequency}
-                    </span>
-                  </div>
-                  <h3 className="mt-2 text-sm font-semibold text-walnut-950">{task.description}</h3>
-                  <div className="mt-3 flex items-center justify-between text-xs text-walnut-600">
-                    <span>{task.assignedTo?.name}</span>
-                    <span className={overdue ? 'font-bold text-brick-600' : ''}>
-                      {fmtDate(task.plannedDate)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between border-t border-cream-200/80 pt-3">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setRemarkTask(task);
-                        setMdRemarkText(task.mdRemark || '');
-                      }}
-                      className="rounded p-1 text-walnut-400 hover:bg-cream-100 hover:text-walnut-900"
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </button>
-                    {task.proofRequired && (
-                      <span className="rounded bg-brick-500/10 px-1.5 py-0.5 text-[10px] font-bold text-brick-600">
-                        Proof Req
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {tasks.map((task) => {
+              const overdue = isOverdue(task.plannedDate) && task.status !== 'completed';
+              const isDone = task.status === 'completed';
+              return (
+                <div
+                  key={task._id}
+                  className="card flex flex-col justify-between p-4 shadow-sm transition hover:shadow-md"
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold text-gold-700">{task.taskCode}</span>
+                      <span className="rounded bg-cream-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-walnut-700">
+                        {task.frequency}
                       </span>
+                    </div>
+                    <h3 className="mt-2 text-sm font-semibold text-walnut-950">{task.description}</h3>
+                    <div className="mt-3 flex items-center justify-between text-xs text-walnut-600">
+                      <span>{task.assignedTo?.name}</span>
+                      <span className={overdue ? 'font-bold text-brick-600' : ''}>
+                        {fmtDate(task.plannedDate)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between border-t border-cream-200/80 pt-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setRemarkTask(task);
+                          setMdRemarkText(task.mdRemark || '');
+                        }}
+                        className="rounded p-1 text-walnut-400 hover:bg-cream-100 hover:text-walnut-900"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </button>
+                      {task.proofRequired && (
+                        <span className="rounded bg-brick-500/10 px-1.5 py-0.5 text-[10px] font-bold text-brick-600">
+                          Proof Req
+                        </span>
+                      )}
+                    </div>
+                    {isDone ? (
+                      <span className="inline-flex items-center gap-1 rounded bg-[#21170d] px-3 py-1 text-xs font-bold text-white">
+                        <Check className="h-3 w-3 text-leaf-400" /> Done
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => setCompletingTask(task)}
+                        className="btn inline-flex items-center gap-1 rounded bg-[#21170d] px-3 py-1 text-xs font-bold text-white hover:bg-walnut-700 hover:text-gold-300"
+                      >
+                        Done
+                      </button>
                     )}
                   </div>
-                  {isDone ? (
-                    <span className="inline-flex items-center gap-1 rounded bg-[#21170d] px-3 py-1 text-xs font-bold text-white">
-                      <Check className="h-3 w-3 text-leaf-400" /> Done
-                    </span>
-                  ) : (
-                    <button
-                      onClick={() => setCompletingTask(task)}
-                      className="btn inline-flex items-center gap-1 rounded bg-[#21170d] px-3 py-1 text-xs font-bold text-white hover:bg-walnut-700 hover:text-gold-300"
-                    >
-                      Done
-                    </button>
-                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          {listData && (
+            <DataTablePagination
+              page={listData.page || page}
+              pages={listData.pages || 1}
+              total={listData.total || tasks.length}
+              limit={limit}
+              onPageChange={setPage}
+              onLimitChange={(l) => {
+                setLimit(l);
+                setPage(1);
+              }}
+            />
+          )}
         </div>
       )}
 
