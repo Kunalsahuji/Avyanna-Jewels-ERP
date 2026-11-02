@@ -14,7 +14,7 @@ class StockService extends BaseService {
   async buildForCreate(user, data) {
     const seq = await nextSeq('parcel', 6);
     const parcelId = `PRC-${seq}`;
-    const barcode = `TJ-STK-${seq}`;
+    const barcode = `AV-STK-${seq}`;
 
     const gross = Number(data.grossWeight) || 0;
     const net = Number(data.netWeight) || gross;
