@@ -10,6 +10,7 @@ import TicketsPage from './pages/TicketsPage.jsx';
 import StockManagementPage from './pages/StockManagementPage.jsx';
 import CityTransferApprovalPage from './pages/CityTransferApprovalPage.jsx';
 import ProductionFmsPage from './pages/ProductionFmsPage.jsx';
+import SupplierFmsPage from './pages/SupplierFmsPage.jsx';
 import ModulePage from './components/ModulePage.jsx';
 import ModulePlaceholder from './components/ModulePlaceholder.jsx';
 import { modules, placeholderModules } from './modules.config.jsx';
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="stock-management" element={<StockManagementPage />} />
         <Route path="city-transfer-approval" element={<CityTransferApprovalPage />} />
         <Route path="production-fms" element={<ProductionFmsPage />} />
+        <Route path="supplier-fms" element={<SupplierFmsPage />} />
         {genericModules.map((m) => (
           <Route key={m.path} path={m.path} element={<ModulePage config={m} />} />
         ))}
