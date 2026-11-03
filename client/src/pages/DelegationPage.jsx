@@ -379,9 +379,8 @@ export default function DelegationPage() {
         {/* Total Tasks */}
         <button
           onClick={() => setStatusFilter('')}
-          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${
-            statusFilter === '' ? 'ring-2 ring-gold-500' : ''
-          }`}
+          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${statusFilter === '' ? 'ring-2 ring-gold-500' : ''
+            }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-walnut-700">Total Tasks</span>
@@ -395,9 +394,8 @@ export default function DelegationPage() {
         {/* Pending */}
         <button
           onClick={() => setStatusFilter('pending')}
-          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${
-            statusFilter === 'pending' ? 'ring-2 ring-gold-500' : ''
-          }`}
+          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${statusFilter === 'pending' ? 'ring-2 ring-gold-500' : ''
+            }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-walnut-700">Pending</span>
@@ -418,9 +416,8 @@ export default function DelegationPage() {
         {/* Approval Waiting */}
         <button
           onClick={() => setStatusFilter('approval_waiting')}
-          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${
-            statusFilter === 'approval_waiting' ? 'ring-2 ring-sky-500' : ''
-          }`}
+          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${statusFilter === 'approval_waiting' ? 'ring-2 ring-sky-500' : ''
+            }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-walnut-700">Approval Waiting</span>
@@ -434,9 +431,8 @@ export default function DelegationPage() {
         {/* Completed */}
         <button
           onClick={() => setStatusFilter('completed')}
-          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${
-            statusFilter === 'completed' ? 'ring-2 ring-leaf-500' : ''
-          }`}
+          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${statusFilter === 'completed' ? 'ring-2 ring-leaf-500' : ''
+            }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-walnut-700">Completed</span>
@@ -450,9 +446,8 @@ export default function DelegationPage() {
         {/* Shifted */}
         <button
           onClick={() => setStatusFilter('shifted')}
-          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${
-            statusFilter === 'shifted' ? 'ring-2 ring-rose-500' : ''
-          }`}
+          className={`card flex flex-col justify-between p-4 text-left transition hover:border-gold-500/60 ${statusFilter === 'shifted' ? 'ring-2 ring-rose-500' : ''
+            }`}
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-walnut-700">Shifted</span>
@@ -516,7 +511,7 @@ export default function DelegationPage() {
               className="btn-primary flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold tracking-wide"
             >
               <Plus className="h-3.5 w-3.5" />
-              + Assign New Task
+              Assign New Task
             </button>
           </div>
         </div>
