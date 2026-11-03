@@ -153,7 +153,7 @@ export default function Dashboard() {
               className="btn-primary flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold tracking-wide"
             >
               <Plus className="h-3.5 w-3.5" />
-              + Assign New Task
+              Assign New Task
             </button>
           </div>
         </div>
@@ -166,7 +166,9 @@ export default function Dashboard() {
                 key={d}
                 onClick={() => setDays(d)}
                 className={`rounded-full px-4 py-1 text-xs font-semibold transition ${
-                  days === d ? 'bg-[#21170d] text-gold-300 shadow-xs' : 'text-walnut-700 hover:text-walnut-950'
+                  days === d
+                    ? 'bg-[#21170d] text-gold-300 font-bold shadow-xs'
+                    : 'text-walnut-700 hover:text-walnut-950 hover:bg-cream-100/60'
                 }`}
               >
                 {label}
